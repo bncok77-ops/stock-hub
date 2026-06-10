@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockHub | 투자자를 위한 뉴스 허브</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="ticker-container">
+            <div class="ticker-wrap" id="stock-ticker">
+                <!-- Ticker items will be injected by JS -->
+            </div>
+        </div>
+        <nav>
+            <div class="logo">StockHub</div>
+            <div class="nav-links">
+                <a href="#" class="active" data-category="all">전체</a>
+                <a href="#" data-category="domestic">국내 증시</a>
+                <a href="#" data-category="global">해외 증시</a>
+                <a href="#" data-category="crypto">가상화폐</a>
+                <a href="#" data-category="ipo">공모주</a>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="뉴스 검색...">
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="news-grid" id="news-container">
+            <!-- News cards will be injected by JS -->
+            <div class="loading">뉴스를 불러오는 중...</div>
+        </section>
+        
+        <aside class="sidebar">
+            <div class="widget">
+                <h3>인기 테마</h3>
+                <ul class="tag-list">
+                    <li>#반도체</li>
+                    <li>#2차전지</li>
+                    <li>#AI</li>
+                    <li>#바이오</li>
+                    <li>#나스닥</li>
+                </ul>
+            </div>
+            <div class="widget">
+                <h3>관심 종목 (Mock)</h3>
+                <div class="watchlist" id="watchlist">
+                    <div class="watch-item">
+                        <span>삼성전자</span>
+                        <span class="price up">78,500 (+1.2%)</span>
+                    </div>
+                    <div class="watch-item">
+                        <span>Apple</span>
+                        <span class="price up">192.42 (+0.8%)</span>
+                    </div>
+                    <div class="watch-item">
+                        <span>Tesla</span>
+                        <span class="price down">174.95 (-2.1%)</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 StockHub. All rights reserved. 본 서비스에서 제공하는 정보는 투자 참고 사항이며, 최종 투자 결정은 본인에게 있습니다.</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
