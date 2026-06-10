@@ -71,12 +71,28 @@ const tickerData = [
 const newsContainer = document.getElementById('news-container');
 const tickerWrap = document.getElementById('stock-ticker');
 const navLinks = document.querySelectorAll('.nav-links a');
+const themeToggle = document.getElementById('theme-toggle');
 
 // Initialize
 function init() {
     renderTicker();
     renderNews('all');
     setupEventListeners();
+    loadTheme();
+}
+
+// Theme Logic
+function loadTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+}
+
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
 }
 
 // Render Stock Ticker
@@ -138,6 +154,8 @@ function setupEventListeners() {
             renderNews(category);
         });
     });
+
+    themeToggle.addEventListener('click', toggleTheme);
 }
 
 // Run app
