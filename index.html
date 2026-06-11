@@ -3,74 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StockHub | 투자자를 위한 뉴스 허브</title>
+    <title>StockHub | 국내 주식 뉴스와 시장 지표</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <div class="ticker-container">
-            <div class="ticker-wrap" id="stock-ticker">
-                <!-- Ticker items will be injected by JS -->
-            </div>
+    <header class="site-header">
+        <div class="ticker-bar" aria-label="실시간 주요 지수">
+            <div class="ticker-track" id="ticker-track"></div>
         </div>
-        <nav>
-            <div class="logo">StockHub</div>
-            <div class="nav-links">
-                <a href="#" class="active" data-category="all">전체</a>
-                <a href="#" data-category="domestic">국내 증시</a>
-                <a href="#" data-category="global">해외 증시</a>
-                <a href="#" data-category="crypto">가상화폐</a>
-                <a href="#" data-category="ipo">공모주</a>
+        <nav class="top-nav">
+            <a class="brand" href="#top" aria-label="StockHub 홈">StockHub</a>
+            <div class="nav-links" aria-label="주요 메뉴">
+                <a href="#dashboard">지표</a>
+                <a href="#news">뉴스</a>
+                <a href="#calendar">날짜별</a>
+                <a href="#themes">테마</a>
             </div>
-            <div class="search-bar">
-                <input type="text" placeholder="뉴스 검색...">
+            <div class="nav-actions">
+                <input id="search-input" type="search" placeholder="종목, 테마, 뉴스 검색">
+                <button id="theme-toggle" type="button" aria-label="화면 테마 변경">라이트</button>
             </div>
-            <button id="theme-toggle" class="theme-btn" aria-label="테마 변경">🌓</button>
         </nav>
     </header>
 
-    <main class="container">
-        <section class="news-grid" id="news-container">
-            <!-- News cards will be injected by JS -->
-            <div class="loading">뉴스를 불러오는 중...</div>
-        </section>
-        
-        <aside class="sidebar">
-            <div class="widget">
-                <h3>인기 테마</h3>
-                <ul class="tag-list">
-                    <li>#반도체</li>
-                    <li>#2차전지</li>
-                    <li>#AI</li>
-                    <li>#바이오</li>
-                    <li>#나스닥</li>
-                </ul>
+    <main id="top">
+        <section class="market-hero" id="dashboard">
+            <div class="section-heading">
+                <p class="eyebrow">국내 주식 중심</p>
+                <h1>주요 지표와 뉴스 흐름을 한 화면에서 확인</h1>
+                <p>국내 주식 투자에 필요한 코스피, 코스닥, 나스닥 100 선물을 최우선으로 배치하고 매크로 지표와 미국 전일 지표를 아래 단계로 정리했습니다.</p>
             </div>
-            <div class="widget">
-                <h3>관심 종목 (Mock)</h3>
-                <div class="watchlist" id="watchlist">
-                    <div class="watch-item">
-                        <span>삼성전자</span>
-                        <span class="price up">78,500 (+1.2%)</span>
+            <div class="hero-grid" id="priority-indices"></div>
+        </section>
+
+        <section class="indicator-section">
+            <div class="section-title-row">
+                <div>
+                    <p class="eyebrow">Macro</p>
+                    <h2>매크로 지표</h2>
+                </div>
+                <span class="section-note">환율, 금리, 원자재, 디지털 자산</span>
+            </div>
+            <div class="indicator-grid" id="macro-indicators"></div>
+        </section>
+
+        <section class="indicator-section">
+            <div class="section-title-row">
+                <div>
+                    <p class="eyebrow">Previous US Session</p>
+                    <h2>미국 전일 지표</h2>
+                </div>
+                <span class="section-note">국내 장 시작 전 참고 지표</span>
+            </div>
+            <div class="indicator-grid compact" id="us-indicators"></div>
+        </section>
+
+        <section class="workspace">
+            <section class="news-panel" id="news">
+                <div class="section-title-row">
+                    <div>
+                        <p class="eyebrow">News</p>
+                        <h2>국내 주식 뉴스</h2>
                     </div>
-                    <div class="watch-item">
-                        <span>Apple</span>
-                        <span class="price up">192.42 (+0.8%)</span>
-                    </div>
-                    <div class="watch-item">
-                        <span>Tesla</span>
-                        <span class="price down">174.95 (-2.1%)</span>
+                    <div class="segmented-control" aria-label="뉴스 정렬 방식">
+                        <button type="button" class="active" data-view="timeline">시간순</button>
+                        <button type="button" data-view="date">날짜별</button>
                     </div>
                 </div>
+
+                <div class="filter-row" aria-label="뉴스 필터">
+                    <button type="button" class="active" data-filter="all">전체</button>
+                    <button type="button" data-filter="stock">종목</button>
+                    <button type="button" data-filter="theme">테마</button>
+                    <button type="button" data-filter="market">시장</button>
+                    <button type="button" data-filter="global">해외</button>
+                </div>
+
+                <div id="news-list" class="news-list" aria-live="polite"></div>
+            </section>
+
+            <aside class="side-rail">
+                <section class="rail-panel" id="themes">
+                    <div class="panel-header">
+                        <h3>테마 카테고리</h3>
+                        <span>국내 종목 기준</span>
+                    </div>
+                    <div class="theme-list" id="theme-list"></div>
+                </section>
+
+                <section class="rail-panel">
+                    <div class="panel-header">
+                        <h3>종목 카테고리</h3>
+                        <span>뉴스 연결</span>
+                    </div>
+                    <div class="stock-list" id="stock-list"></div>
+                </section>
+            </aside>
+        </section>
+
+        <section class="calendar-section" id="calendar">
+            <div class="section-title-row">
+                <div>
+                    <p class="eyebrow">Daily Brief</p>
+                    <h2>날짜별 뉴스 묶음</h2>
+                </div>
             </div>
-        </aside>
+            <div id="date-groups" class="date-groups"></div>
+        </section>
     </main>
 
     <footer>
-        <p>&copy; 2026 StockHub. All rights reserved. 본 서비스에서 제공하는 정보는 투자 참고 사항이며, 최종 투자 결정은 본인에게 있습니다.</p>
+        <p>StockHub는 화면 구성용 정적 대시보드입니다. 표시 값은 예시 데이터이며 실제 투자 판단 전 원천 데이터를 확인해야 합니다.</p>
     </footer>
 
     <script src="app.js"></script>
