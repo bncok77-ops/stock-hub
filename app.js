@@ -222,7 +222,7 @@ async function fetchMarketData() {
 
         setIndicators(data);
         const updated = new Date(data.generatedAt);
-        updateDataStatus(`갱신 ${formatCompactDate(updated)} ${formatters.time.format(updated)} · 무료 GitHub Pages는 약 5분 주기로 갱신`);
+        updateDataStatus(`갱신 ${formatCompactDate(updated)} ${formatters.time.format(updated)} · 약 5분 주기 갱신`);
     } catch (error) {
         console.error(error);
         updateDataStatus("시장 데이터를 불러오지 못했습니다. 잠시 후 다시 확인해 주세요.", true);
