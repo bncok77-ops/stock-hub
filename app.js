@@ -11,16 +11,17 @@ const fallbackIndicators = {
     ],
     macroIndicators: [
         { name: "달러 환율", label: "USD/KRW", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints },
+        { name: "비트코인", label: "BTC/USD", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints },
         { name: "미국채 10년", label: "Yield", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints },
         { name: "미국채 30년", label: "Yield", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints },
         { name: "금", label: "Gold", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints },
-        { name: "비트코인", label: "BTC/USD", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints },
         { name: "국제 유가", label: "WTI", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints }
     ],
     usIndicators: [
         { name: "나스닥", label: "NASDAQ", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints },
         { name: "S&P 500", label: "S&P 500", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints },
-        { name: "필라델피아 반도체", label: "SOX", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints }
+        { name: "필라델피아 반도체", label: "SOX", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints },
+        { name: "VIX", label: "Volatility", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints }
     ]
 };
 
@@ -106,6 +107,8 @@ function formatMarketDate(item) {
 
 function formatDelay(item) {
     const session = item.marketSession;
+    if (session?.status === "always-open") return "5분 주기 갱신";
+    if (session?.status === "fx-stale") return "최근 고시";
     if (session?.status === "closed") return "장마감";
     if (session?.status === "pre") return "장전";
     if (session?.status === "post") return "시간외";
@@ -116,11 +119,7 @@ function formatDelay(item) {
     if (seconds < 60) return `지연 ${seconds}초`;
     const minutes = Math.floor(seconds / 60);
     if (minutes < 60) return `지연 ${minutes}분`;
-    const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `지연 ${hours}시간`;
-    const days = Math.floor(hours / 24);
-    const remainHours = hours % 24;
-    return remainHours ? `지연 ${days}일 ${remainHours}시간` : `지연 ${days}일`;
+    return session?.label || "거래중";
 }
 
 function createSparkline(points, status) {

@@ -5,17 +5,18 @@ const symbols = {
         { symbol: "NQ=F", name: "나스닥100 선물", label: "NQ Futures", decimals: 2 }
     ],
     macroIndicators: [
-        { symbol: "KRW=X", name: "달러 환율", label: "USD/KRW", decimals: 2 },
+        { symbol: "KRW=X", name: "달러 환율", label: "USD/KRW", decimals: 2, marketType: "fx", displayTimezone: "Asia/Seoul" },
+        { symbol: "BTC-USD", name: "비트코인", label: "BTC/USD", decimals: 0, prefix: "$", marketType: "crypto" },
         { symbol: "^TNX", name: "미국채 10년", label: "Yield", decimals: 2, suffix: "%" },
         { symbol: "^TYX", name: "미국채 30년", label: "Yield", decimals: 2, suffix: "%" },
         { symbol: "GC=F", name: "금", label: "Gold", decimals: 2, prefix: "$" },
-        { symbol: "BTC-USD", name: "비트코인", label: "BTC/USD", decimals: 0, prefix: "$" },
         { symbol: "CL=F", name: "국제 유가", label: "WTI", decimals: 2, prefix: "$" }
     ],
     usIndicators: [
         { symbol: "^IXIC", name: "나스닥", label: "NASDAQ", decimals: 2 },
         { symbol: "^GSPC", name: "S&P 500", label: "S&P 500", decimals: 2 },
-        { symbol: "^SOX", name: "필라델피아 반도체", label: "SOX", decimals: 2 }
+        { symbol: "^SOX", name: "필라델피아 반도체", label: "SOX", decimals: 2 },
+        { symbol: "^VIX", name: "VIX", label: "Volatility", decimals: 2 }
     ]
 };
 
@@ -48,23 +49,37 @@ function statusFromChange(change) {
     return "flat";
 }
 
-function formatMarketDate(timestampSeconds) {
+function formatMarketDate(timestampSeconds, timezone = "Asia/Seoul") {
     if (!Number.isFinite(timestampSeconds)) return null;
-    const date = new Date(timestampSeconds * 1000);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}.${month}.${day}`;
+    const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: timezone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    }).formatToParts(new Date(timestampSeconds * 1000));
+    const get = type => parts.find(part => part.type === type)?.value;
+    return `${get("year")}.${get("month")}.${get("day")}`;
 }
 
-function getMarketSession(meta) {
+function getMarketSession(config, meta, delaySeconds) {
     const now = Math.floor(Date.now() / 1000);
     const regular = meta.currentTradingPeriod?.regular;
     const pre = meta.currentTradingPeriod?.pre;
     const post = meta.currentTradingPeriod?.post;
 
-    if (meta.exchangeName === "CCC") {
-        return { status: "open", label: "24시간" };
+    if (config.marketType === "crypto" || meta.exchangeName === "CCC") {
+        return { status: "always-open", label: "24시간" };
+    }
+
+    if (config.marketType === "fx" || meta.exchangeName === "CCY") {
+        if (Number.isFinite(delaySeconds) && delaySeconds <= 7200) {
+            return { status: "open", label: "환율 갱신" };
+        }
+        return { status: "fx-stale", label: "최근 고시" };
+    }
+
+    if (Number.isFinite(delaySeconds) && delaySeconds > 7200) {
+        return { status: "closed", label: "장마감" };
     }
 
     if (regular && now >= regular.start && now <= regular.end) {
@@ -75,7 +90,7 @@ function getMarketSession(meta) {
         return { status: "pre", label: "장전" };
     }
 
-    if (post && now > regular?.end && now <= post.end) {
+    if (post && regular && now > regular.end && now <= post.end) {
         return { status: "post", label: "시간외" };
     }
 
@@ -121,12 +136,8 @@ function chartToIndicator(config, chart) {
     const percent = Number.isFinite(change) && previousClose ? (change / previousClose) * 100 : NaN;
     const marketTime = Number(meta.regularMarketTime || latestPointTime);
     const delaySeconds = Number.isFinite(marketTime) ? Math.max(0, Math.floor(Date.now() / 1000 - marketTime)) : null;
-    const marketSession = getMarketSession(meta);
-
-    if (meta.exchangeName !== "CCC" && Number.isFinite(delaySeconds) && delaySeconds > 7200) {
-        marketSession.status = "closed";
-        marketSession.label = "장마감";
-    }
+    const marketSession = getMarketSession(config, meta, delaySeconds);
+    const displayTimezone = config.displayTimezone || meta.exchangeTimezoneName || "Asia/Seoul";
 
     return {
         name: config.name,
@@ -141,8 +152,9 @@ function chartToIndicator(config, chart) {
         symbol: config.symbol,
         exchangeName: meta.exchangeName || null,
         exchangeTimezoneName: meta.exchangeTimezoneName || null,
+        displayTimezone,
         marketSession,
-        marketDate: formatMarketDate(marketTime),
+        marketDate: formatMarketDate(marketTime, displayTimezone),
         marketTime: Number.isFinite(marketTime) ? new Date(marketTime * 1000).toISOString() : null
     };
 }
@@ -161,6 +173,7 @@ function failedIndicator(config, error) {
         symbol: config.symbol,
         exchangeName: null,
         exchangeTimezoneName: null,
+        displayTimezone: config.displayTimezone || null,
         marketSession: { status: "unknown", label: "확인 필요" },
         marketDate: null,
         marketTime: null,

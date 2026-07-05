@@ -283,8 +283,7 @@ h3 {
     gap: 10px;
 }
 
-.priority-grid,
-.indicator-grid.compact {
+.priority-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
