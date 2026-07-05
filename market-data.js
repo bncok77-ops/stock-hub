@@ -57,6 +57,31 @@ function formatMarketDate(timestampSeconds) {
     return `${year}.${month}.${day}`;
 }
 
+function getMarketSession(meta) {
+    const now = Math.floor(Date.now() / 1000);
+    const regular = meta.currentTradingPeriod?.regular;
+    const pre = meta.currentTradingPeriod?.pre;
+    const post = meta.currentTradingPeriod?.post;
+
+    if (meta.exchangeName === "CCC") {
+        return { status: "open", label: "24시간" };
+    }
+
+    if (regular && now >= regular.start && now <= regular.end) {
+        return { status: "open", label: "정규장" };
+    }
+
+    if (pre && now >= pre.start && now < pre.end) {
+        return { status: "pre", label: "장전" };
+    }
+
+    if (post && now > regular?.end && now <= post.end) {
+        return { status: "post", label: "시간외" };
+    }
+
+    return { status: "closed", label: "장마감" };
+}
+
 async function fetchYahooChart(symbol) {
     const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=5d&interval=15m`;
     const response = await fetch(url, {
@@ -96,6 +121,12 @@ function chartToIndicator(config, chart) {
     const percent = Number.isFinite(change) && previousClose ? (change / previousClose) * 100 : NaN;
     const marketTime = Number(meta.regularMarketTime || latestPointTime);
     const delaySeconds = Number.isFinite(marketTime) ? Math.max(0, Math.floor(Date.now() / 1000 - marketTime)) : null;
+    const marketSession = getMarketSession(meta);
+
+    if (meta.exchangeName !== "CCC" && Number.isFinite(delaySeconds) && delaySeconds > 7200) {
+        marketSession.status = "closed";
+        marketSession.label = "장마감";
+    }
 
     return {
         name: config.name,
@@ -108,6 +139,9 @@ function chartToIndicator(config, chart) {
         points: closes.slice(-24),
         source: "Yahoo Finance",
         symbol: config.symbol,
+        exchangeName: meta.exchangeName || null,
+        exchangeTimezoneName: meta.exchangeTimezoneName || null,
+        marketSession,
         marketDate: formatMarketDate(marketTime),
         marketTime: Number.isFinite(marketTime) ? new Date(marketTime * 1000).toISOString() : null
     };
@@ -125,6 +159,9 @@ function failedIndicator(config, error) {
         points: [1, 1, 1, 1, 1],
         source: "Yahoo Finance",
         symbol: config.symbol,
+        exchangeName: null,
+        exchangeTimezoneName: null,
+        marketSession: { status: "unknown", label: "확인 필요" },
         marketDate: null,
         marketTime: null,
         error: error.message

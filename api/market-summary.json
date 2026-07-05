@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-05T07:21:49.338Z",
+  "generatedAt": "2026-07-05T08:03:32.773Z",
   "source": "Yahoo Finance chart endpoint",
   "refreshIntervalSeconds": 300,
   "priorityIndices": [
@@ -10,7 +10,7 @@
       "change": "+440.25",
       "percent": "+5.76%",
       "status": "up",
-      "delaySeconds": 166579,
+      "delaySeconds": 169082,
       "points": [
         7508.2998046875,
         7487.4599609375,
@@ -39,6 +39,12 @@
       ],
       "source": "Yahoo Finance",
       "symbol": "^KS11",
+      "exchangeName": "KSC",
+      "exchangeTimezoneName": "Asia/Seoul",
+      "marketSession": {
+        "status": "closed",
+        "label": "장마감"
+      },
       "marketDate": "2026.07.03",
       "marketTime": "2026-07-03T09:05:30.000Z"
     },
@@ -49,7 +55,7 @@
       "change": "+1.69",
       "percent": "+0.19%",
       "status": "up",
-      "delaySeconds": 166579,
+      "delaySeconds": 169082,
       "points": [
         835.25,
         831.4500122070312,
@@ -78,6 +84,12 @@
       ],
       "source": "Yahoo Finance",
       "symbol": "^KQ11",
+      "exchangeName": "KOE",
+      "exchangeTimezoneName": "Asia/Seoul",
+      "marketSession": {
+        "status": "closed",
+        "label": "장마감"
+      },
       "marketDate": "2026.07.03",
       "marketTime": "2026-07-03T09:05:30.000Z"
     },
@@ -88,7 +100,7 @@
       "change": "+345.75",
       "percent": "+1.17%",
       "status": "up",
-      "delaySeconds": 138110,
+      "delaySeconds": 140613,
       "points": [
         29578.5,
         29620.5,
@@ -117,6 +129,12 @@
       ],
       "source": "Yahoo Finance",
       "symbol": "NQ=F",
+      "exchangeName": "CME",
+      "exchangeTimezoneName": "America/New_York",
+      "marketSession": {
+        "status": "closed",
+        "label": "장마감"
+      },
       "marketDate": "2026.07.04",
       "marketTime": "2026-07-03T16:59:59.000Z"
     }
@@ -129,7 +147,7 @@
       "change": "-7.82",
       "percent": "-0.51%",
       "status": "down",
-      "delaySeconds": 125689,
+      "delaySeconds": 128192,
       "points": [
         1531.5799560546875,
         1532.31005859375,
@@ -158,6 +176,12 @@
       ],
       "source": "Yahoo Finance",
       "symbol": "KRW=X",
+      "exchangeName": "CCY",
+      "exchangeTimezoneName": "Europe/London",
+      "marketSession": {
+        "status": "closed",
+        "label": "장마감"
+      },
       "marketDate": "2026.07.04",
       "marketTime": "2026-07-03T20:27:00.000Z"
     },
@@ -168,7 +192,7 @@
       "change": "0.00",
       "percent": "0.00%",
       "status": "flat",
-      "delaySeconds": 217313,
+      "delaySeconds": 219816,
       "points": [
         4.4830002784729,
         4.470999717712402,
@@ -197,6 +221,12 @@
       ],
       "source": "Yahoo Finance",
       "symbol": "^TNX",
+      "exchangeName": "CGI",
+      "exchangeTimezoneName": "America/Chicago",
+      "marketSession": {
+        "status": "closed",
+        "label": "장마감"
+      },
       "marketDate": "2026.07.03",
       "marketTime": "2026-07-02T18:59:56.000Z"
     },
@@ -207,7 +237,7 @@
       "change": "0.00",
       "percent": "0.00%",
       "status": "flat",
-      "delaySeconds": 217313,
+      "delaySeconds": 219816,
       "points": [
         4.990000247955322,
         4.980999946594238,
@@ -236,6 +266,12 @@
       ],
       "source": "Yahoo Finance",
       "symbol": "^TYX",
+      "exchangeName": "CGI",
+      "exchangeTimezoneName": "America/Chicago",
+      "marketSession": {
+        "status": "closed",
+        "label": "장마감"
+      },
       "marketDate": "2026.07.03",
       "marketTime": "2026-07-02T18:59:56.000Z"
     },
@@ -246,7 +282,7 @@
       "change": "+61.60",
       "percent": "+1.49%",
       "status": "up",
-      "delaySeconds": 138111,
+      "delaySeconds": 140614,
       "points": [
         4137,
         4135.89990234375,
@@ -275,21 +311,24 @@
       ],
       "source": "Yahoo Finance",
       "symbol": "GC=F",
+      "exchangeName": "CMX",
+      "exchangeTimezoneName": "America/New_York",
+      "marketSession": {
+        "status": "closed",
+        "label": "장마감"
+      },
       "marketDate": "2026.07.04",
       "marketTime": "2026-07-03T16:59:58.000Z"
     },
     {
       "name": "비트코인",
       "label": "BTC/USD",
-      "value": "$62,667",
-      "change": "-421",
-      "percent": "-0.67%",
+      "value": "$62,998",
+      "change": "-89",
+      "percent": "-0.14%",
       "status": "down",
-      "delaySeconds": 6,
+      "delaySeconds": 4,
       "points": [
-        62831.6796875,
-        62689.03125,
-        62701.12890625,
         62586.41015625,
         62639.98046875,
         62707.51171875,
@@ -309,13 +348,22 @@
         62700.01171875,
         62722.05859375,
         62702.5,
-        62662.6015625,
-        62666.94140625
+        62695.05859375,
+        62863.48046875,
+        62958.44140625,
+        62991.03125,
+        62998.30859375
       ],
       "source": "Yahoo Finance",
       "symbol": "BTC-USD",
+      "exchangeName": "CCC",
+      "exchangeTimezoneName": "UTC",
+      "marketSession": {
+        "status": "open",
+        "label": "24시간"
+      },
       "marketDate": "2026.07.05",
-      "marketTime": "2026-07-05T07:21:43.000Z"
+      "marketTime": "2026-07-05T08:03:28.000Z"
     },
     {
       "name": "국제 유가",
@@ -324,7 +372,7 @@
       "change": "+0.09",
       "percent": "+0.13%",
       "status": "up",
-      "delaySeconds": 138110,
+      "delaySeconds": 140613,
       "points": [
         68.5,
         68.5,
@@ -353,6 +401,12 @@
       ],
       "source": "Yahoo Finance",
       "symbol": "CL=F",
+      "exchangeName": "NYM",
+      "exchangeTimezoneName": "America/New_York",
+      "marketSession": {
+        "status": "closed",
+        "label": "장마감"
+      },
       "marketDate": "2026.07.04",
       "marketTime": "2026-07-03T16:59:59.000Z"
     }
@@ -365,7 +419,7 @@
       "change": "-207.36",
       "percent": "-0.80%",
       "status": "down",
-      "delaySeconds": 209150,
+      "delaySeconds": 211653,
       "points": [
         26060.0078125,
         25969.17578125,
@@ -394,6 +448,12 @@
       ],
       "source": "Yahoo Finance",
       "symbol": "^IXIC",
+      "exchangeName": "NIM",
+      "exchangeTimezoneName": "America/New_York",
+      "marketSession": {
+        "status": "closed",
+        "label": "장마감"
+      },
       "marketDate": "2026.07.03",
       "marketTime": "2026-07-02T21:15:59.000Z"
     },
@@ -404,7 +464,7 @@
       "change": "+0.01",
       "percent": "+0.00%",
       "status": "up",
-      "delaySeconds": 211174,
+      "delaySeconds": 213677,
       "points": [
         7507.5400390625,
         7495.35009765625,
@@ -433,6 +493,12 @@
       ],
       "source": "Yahoo Finance",
       "symbol": "^GSPC",
+      "exchangeName": "SNP",
+      "exchangeTimezoneName": "America/New_York",
+      "marketSession": {
+        "status": "closed",
+        "label": "장마감"
+      },
       "marketDate": "2026.07.03",
       "marketTime": "2026-07-02T20:42:15.000Z"
     },
@@ -443,7 +509,7 @@
       "change": "-727.06",
       "percent": "-5.44%",
       "status": "down",
-      "delaySeconds": 209150,
+      "delaySeconds": 211653,
       "points": [
         13091.23046875,
         12933.0927734375,
@@ -472,6 +538,12 @@
       ],
       "source": "Yahoo Finance",
       "symbol": "^SOX",
+      "exchangeName": "NIM",
+      "exchangeTimezoneName": "America/New_York",
+      "marketSession": {
+        "status": "closed",
+        "label": "장마감"
+      },
       "marketDate": "2026.07.03",
       "marketTime": "2026-07-02T21:15:59.000Z"
     }

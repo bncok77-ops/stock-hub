@@ -104,7 +104,14 @@ function formatMarketDate(item) {
     return formatCompactDate(new Date(item.marketTime));
 }
 
-function formatDelay(seconds) {
+function formatDelay(item) {
+    const session = item.marketSession;
+    if (session?.status === "closed") return "장마감";
+    if (session?.status === "pre") return "장전";
+    if (session?.status === "post") return "시간외";
+    if (session?.status === "unknown") return "확인 필요";
+
+    const seconds = item.delaySeconds;
     if (!Number.isFinite(seconds)) return "지연 확인 중";
     if (seconds < 60) return `지연 ${seconds}초`;
     const minutes = Math.floor(seconds / 60);
@@ -153,7 +160,7 @@ function renderIndicatorCard(item, priority = false) {
             ${createSparkline(item.points, item.status)}
             <div class="indicator-meta">
                 <span>기준일 ${formatMarketDate(item)}</span>
-                <span>${formatDelay(item.delaySeconds)}</span>
+                <span>${formatDelay(item)}</span>
             </div>
         </article>
     `;
@@ -201,10 +208,17 @@ async function fetchJson(url) {
 async function fetchMarketData() {
     try {
         let data;
-        try {
-            data = await fetchJson("api/market-summary");
-        } catch {
-            data = await fetchJson("api/market-summary.json");
+        const cacheBust = `v=${Date.now()}`;
+        const isLocalServer = ["localhost", "127.0.0.1"].includes(window.location.hostname);
+
+        if (isLocalServer) {
+            try {
+                data = await fetchJson(`api/market-summary?${cacheBust}`);
+            } catch {
+                data = await fetchJson(`api/market-summary.json?${cacheBust}`);
+            }
+        } else {
+            data = await fetchJson(`api/market-summary.json?${cacheBust}`);
         }
 
         setIndicators(data);
