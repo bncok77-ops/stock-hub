@@ -11,7 +11,7 @@
 </head>
 <body>
     <header class="site-header">
-        <div class="ticker-bar" aria-label="실시간 주요 지수">
+        <div class="ticker-bar" aria-label="실시간 주요 지표">
             <div class="ticker-track" id="ticker-track"></div>
         </div>
         <nav class="top-nav">
@@ -24,7 +24,7 @@
             </div>
             <div class="nav-actions">
                 <input id="search-input" type="search" placeholder="종목, 테마, 뉴스 검색">
-                <button id="theme-toggle" type="button" aria-label="화면 테마 변경">라이트</button>
+                <button id="theme-toggle" type="button" aria-label="화면 테마 변경">다크</button>
             </div>
         </nav>
     </header>
@@ -34,8 +34,9 @@
             <div class="section-heading">
                 <p class="eyebrow">국내 주식 중심</p>
                 <h1>주요 지표와 뉴스 흐름을 한 화면에서 확인</h1>
-                <p>국내 주식 투자에 필요한 코스피, 코스닥, 나스닥 100 선물을 최우선으로 배치하고 매크로 지표와 미국 전일 지표를 아래 단계로 정리했습니다.</p>
+                <p>코스피, 코스닥, 나스닥100 선물을 우선 배치하고 환율, 금리, 원자재, 디지털 자산, 미국 전일 지표를 함께 정리했습니다.</p>
             </div>
+            <div class="data-status" id="data-status" aria-live="polite">시장 데이터를 불러오는 중입니다.</div>
             <div class="hero-grid" id="priority-indices"></div>
         </section>
 
@@ -116,7 +117,7 @@
     </main>
 
     <footer>
-        <p>StockHub는 화면 구성용 정적 대시보드입니다. 표시 값은 예시 데이터이며 실제 투자 판단 전 원천 데이터를 확인해야 합니다.</p>
+        <p>StockHub의 시장 데이터는 무료 공개 엔드포인트 기반 참고 정보입니다. 실제 투자 판단 전 거래소, 증권사, 공식 통계기관의 원천 데이터를 확인해야 합니다.</p>
     </footer>
 
     <script src="app.js"></script>

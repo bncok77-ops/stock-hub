@@ -1,52 +1,32 @@
-const priorityIndices = [
-    {
-        name: "코스피",
-        label: "실시간 느낌",
-        value: "2,756.41",
-        change: "+18.22",
-        percent: "+0.67%",
-        status: "up",
-        points: [42, 44, 43, 46, 48, 47, 50, 53, 52, 55]
-    },
-    {
-        name: "코스닥",
-        label: "실시간 느낌",
-        value: "879.32",
-        change: "+5.14",
-        percent: "+0.59%",
-        status: "up",
-        points: [35, 34, 37, 36, 39, 41, 40, 43, 46, 45]
-    },
-    {
-        name: "나스닥 100 선물",
-        label: "실시간 느낌",
-        value: "19,742.25",
-        change: "-34.50",
-        percent: "-0.17%",
-        status: "down",
-        points: [61, 60, 58, 57, 59, 56, 55, 53, 54, 52]
-    }
-];
+let priorityIndices = [];
+let macroIndicators = [];
+let usIndicators = [];
 
-const macroIndicators = [
-    { name: "달러 환율", label: "USD/KRW", value: "1,365.80", change: "+4.10", percent: "+0.30%", status: "up", points: [38, 39, 41, 40, 42, 45, 44, 47, 48, 50] },
-    { name: "미국채 10년", label: "Yield", value: "4.31%", change: "-0.02", percent: "-0.46%", status: "down", points: [55, 56, 54, 53, 52, 51, 50, 49, 50, 48] },
-    { name: "미국채 30년", label: "Yield", value: "4.47%", change: "-0.01", percent: "-0.22%", status: "down", points: [52, 53, 52, 51, 51, 50, 49, 49, 48, 47] },
-    { name: "금", label: "Gold Futures", value: "$2,357.60", change: "+12.80", percent: "+0.55%", status: "up", points: [41, 42, 44, 43, 45, 48, 49, 47, 50, 52] },
-    { name: "비트코인", label: "BTC/USD", value: "$67,420", change: "-680", percent: "-1.00%", status: "down", points: [62, 60, 59, 57, 58, 55, 53, 54, 52, 50] },
-    { name: "국제 유가", label: "WTI", value: "$78.14", change: "+0.44", percent: "+0.57%", status: "up", points: [44, 43, 45, 46, 45, 48, 47, 49, 50, 51] }
-];
-
-const usIndicators = [
-    { name: "나스닥", label: "전일 종가", value: "17,343.55", change: "+151.02", percent: "+0.88%", status: "up", points: [38, 39, 41, 44, 43, 47, 49, 51, 53, 56] },
-    { name: "S&P 500", label: "전일 종가", value: "5,421.03", change: "+33.92", percent: "+0.63%", status: "up", points: [42, 43, 44, 46, 45, 48, 50, 51, 53, 54] },
-    { name: "필라델피아 반도체", label: "전일 종가", value: "5,318.12", change: "-21.75", percent: "-0.41%", status: "down", points: [58, 57, 56, 54, 55, 53, 52, 50, 49, 48] }
-];
+const fallbackIndicators = {
+    priorityIndices: [
+        { name: "코스피", label: "대기 중", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] },
+        { name: "코스닥", label: "대기 중", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] },
+        { name: "나스닥100 선물", label: "대기 중", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] }
+    ],
+    macroIndicators: [
+        { name: "달러 환율", label: "USD/KRW", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] },
+        { name: "미국채 10년", label: "Yield", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] },
+        { name: "미국채 30년", label: "Yield", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] },
+        { name: "금", label: "Gold Futures", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] },
+        { name: "비트코인", label: "BTC/USD", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] },
+        { name: "국제 유가", label: "WTI", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] }
+    ],
+    usIndicators: [
+        { name: "나스닥", label: "전일 종가", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] },
+        { name: "S&P 500", label: "전일 종가", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] },
+        { name: "필라델피아 반도체", label: "전일 종가", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] }
+    ]
+};
 
 const newsData = [
     {
         title: "삼성전자, HBM 공급 기대감에 장중 강세",
-        summary: "반도체 대형주 수급이 개선되며 코스피 방향성에 영향을 주고 있습니다.",
+        summary: "반도체 대형주의 수급이 개선되며 코스피 방향성에 영향을 주고 있습니다.",
         source: "마켓브리프",
         publishedAt: "2026-06-11T14:35:00+09:00",
         category: "stock",
@@ -56,8 +36,8 @@ const newsData = [
     },
     {
         title: "2차전지 소재주, 전기차 판매 회복 기대에 동반 상승",
-        summary: "양극재와 전해액 관련 종목에 단기 순환매가 유입됐습니다.",
-        source: "증시포커스",
+        summary: "업계 수주 전망과 정책 기대가 맞물리며 관련 종목에 단기 매수가 유입됐습니다.",
+        source: "증시리포트",
         publishedAt: "2026-06-11T13:10:00+09:00",
         category: "theme",
         categoryName: "테마",
@@ -75,7 +55,7 @@ const newsData = [
         theme: "수출주"
     },
     {
-        title: "미국 기술주 전일 반등, 국내 AI 인프라주 관심 확대",
+        title: "미국 기술주 반등, 국내 AI 인프라주 관심 확대",
         summary: "나스닥과 S&P 500 상승 마감 이후 국내 AI 서버, 전력설비 관련주가 주목받고 있습니다.",
         source: "글로벌마켓",
         publishedAt: "2026-06-11T09:05:00+09:00",
@@ -86,7 +66,7 @@ const newsData = [
     },
     {
         title: "방산주, 해외 수주 모멘텀 재평가",
-        summary: "중동과 유럽 프로젝트 기대감이 이어지며 대형 방산주의 거래대금이 늘었습니다.",
+        summary: "중동과 유럽 프로젝트 기대감이 이어지며 주요 방산주의 거래대금이 늘었습니다.",
         source: "섹터리포트",
         publishedAt: "2026-06-10T15:40:00+09:00",
         category: "theme",
@@ -105,9 +85,9 @@ const newsData = [
         theme: "바이오"
     },
     {
-        title: "국제 유가 상승, 정유와 조선 업종에 상반된 영향",
-        summary: "에너지 가격 반등이 업종별 마진과 발주 전망을 동시에 흔들고 있습니다.",
-        source: "원자재데일리",
+        title: "국제 유가 상승, 정유와 조선 업종에 엇갈린 영향",
+        summary: "에너지 가격 반등은 업종별 마진과 발주 전망을 동시에 흔들고 있습니다.",
+        source: "에너지데일리",
         publishedAt: "2026-06-09T16:05:00+09:00",
         category: "global",
         categoryName: "해외",
@@ -145,11 +125,12 @@ const formatters = {
 function createSparkline(points, status) {
     const width = 240;
     const height = 82;
-    const min = Math.min(...points);
-    const max = Math.max(...points);
+    const safePoints = points.length > 1 ? points : [1, 1];
+    const min = Math.min(...safePoints);
+    const max = Math.max(...safePoints);
     const range = max - min || 1;
-    const step = width / (points.length - 1);
-    const path = points.map((point, index) => {
+    const step = width / (safePoints.length - 1);
+    const path = safePoints.map((point, index) => {
         const x = index * step;
         const y = height - ((point - min) / range) * (height - 12) - 6;
         return `${index === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`;
@@ -163,6 +144,7 @@ function createSparkline(points, status) {
 }
 
 function renderIndicatorCard(item, priority = false) {
+    const delay = Number.isFinite(item.delaySeconds) ? `지연 ${item.delaySeconds.toLocaleString("ko-KR")}초` : "지연 확인 중";
     return `
         <article class="indicator-card${priority ? " priority" : ""}">
             <div class="indicator-top">
@@ -175,6 +157,7 @@ function renderIndicatorCard(item, priority = false) {
                     ${item.change}<br>${item.percent}
                 </div>
             </div>
+            <div class="delay-badge">${delay}</div>
             ${createSparkline(item.points, item.status)}
         </article>
     `;
@@ -194,6 +177,37 @@ function renderTicker() {
         </span>
     `).join("");
     document.getElementById("ticker-track").innerHTML = tickerItems + tickerItems;
+}
+
+function setIndicators(data) {
+    priorityIndices = data.priorityIndices || fallbackIndicators.priorityIndices;
+    macroIndicators = data.macroIndicators || fallbackIndicators.macroIndicators;
+    usIndicators = data.usIndicators || fallbackIndicators.usIndicators;
+    renderIndicators();
+    renderTicker();
+}
+
+function updateDataStatus(message, isError = false) {
+    const status = document.getElementById("data-status");
+    status.textContent = message;
+    status.classList.toggle("error", isError);
+}
+
+async function fetchMarketData() {
+    try {
+        const response = await fetch("/api/market-summary", { cache: "no-store" });
+        if (!response.ok) {
+            throw new Error(`시장 데이터 요청 실패: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setIndicators(data);
+        const updated = new Date(data.generatedAt);
+        updateDataStatus(`시장 데이터 갱신: ${formatters.date.format(updated)} ${formatters.time.format(updated)} · 카드별 기준 시각 대비 지연 초 표시`);
+    } catch (error) {
+        console.error(error);
+        updateDataStatus("시장 데이터를 불러오지 못했습니다. 잠시 후 다시 시도합니다.", true);
+    }
 }
 
 function getFilteredNews() {
@@ -279,7 +293,8 @@ function renderNews() {
 }
 
 function renderDateGroups() {
-    const groups = groupNewsByDate(newsData.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt)));
+    const sortedNews = [...newsData].sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+    const groups = groupNewsByDate(sortedNews);
     document.getElementById("date-groups").innerHTML = Object.entries(groups).map(([dateKey, items]) => {
         const date = new Date(`${dateKey}T00:00:00+09:00`);
         return `
@@ -352,23 +367,24 @@ function setupInteractions() {
         const next = current === "dark" ? "light" : "dark";
         document.documentElement.dataset.theme = next;
         localStorage.setItem("stockhub-theme", next);
-        document.getElementById("theme-toggle").textContent = next === "dark" ? "라이트" : "다크";
+        document.getElementById("theme-toggle").textContent = next === "dark" ? "다크" : "라이트";
     });
 }
 
 function loadTheme() {
     const saved = localStorage.getItem("stockhub-theme") || "dark";
     document.documentElement.dataset.theme = saved;
-    document.getElementById("theme-toggle").textContent = saved === "dark" ? "라이트" : "다크";
+    document.getElementById("theme-toggle").textContent = saved === "dark" ? "다크" : "라이트";
 }
 
 function init() {
     loadTheme();
-    renderIndicators();
-    renderTicker();
+    setIndicators(fallbackIndicators);
     renderSideRail();
     renderNews();
     setupInteractions();
+    fetchMarketData();
+    setInterval(fetchMarketData, 15000);
 }
 
 document.addEventListener("DOMContentLoaded", init);
