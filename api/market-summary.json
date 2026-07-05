@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-05T08:14:31.936Z",
+  "generatedAt": "2026-07-05T08:19:36.612Z",
   "source": "Yahoo Finance chart endpoint",
   "refreshIntervalSeconds": 300,
   "priorityIndices": [
@@ -10,7 +10,7 @@
       "change": "+440.25",
       "percent": "+5.76%",
       "status": "up",
-      "delaySeconds": 169741,
+      "delaySeconds": 170046,
       "points": [
         7508.2998046875,
         7487.4599609375,
@@ -56,7 +56,7 @@
       "change": "+1.69",
       "percent": "+0.19%",
       "status": "up",
-      "delaySeconds": 169741,
+      "delaySeconds": 170046,
       "points": [
         835.25,
         831.4500122070312,
@@ -102,7 +102,7 @@
       "change": "+345.75",
       "percent": "+1.17%",
       "status": "up",
-      "delaySeconds": 141272,
+      "delaySeconds": 141577,
       "points": [
         29578.5,
         29620.5,
@@ -150,7 +150,7 @@
       "change": "-7.82",
       "percent": "-0.51%",
       "status": "down",
-      "delaySeconds": 128851,
+      "delaySeconds": 129156,
       "points": [
         1531.5799560546875,
         1532.31005859375,
@@ -192,13 +192,12 @@
     {
       "name": "비트코인",
       "label": "BTC/USD",
-      "value": "$62,973",
-      "change": "-115",
-      "percent": "-0.18%",
+      "value": "$62,931",
+      "change": "-157",
+      "percent": "-0.25%",
       "status": "down",
-      "delaySeconds": 2,
+      "delaySeconds": 6,
       "points": [
-        62586.41015625,
         62639.98046875,
         62707.51171875,
         62612.4609375,
@@ -220,8 +219,9 @@
         62695.05859375,
         62863.48046875,
         62958.44140625,
-        62966.3515625,
-        62972.890625
+        62955.76171875,
+        62924.3984375,
+        62930.7890625
       ],
       "source": "Yahoo Finance",
       "symbol": "BTC-USD",
@@ -233,16 +233,16 @@
         "label": "24시간"
       },
       "marketDate": "2026.07.05",
-      "marketTime": "2026-07-05T08:14:29.000Z"
+      "marketTime": "2026-07-05T08:19:30.000Z"
     },
     {
       "name": "미국채 10년",
       "label": "Yield",
       "value": "4.48%",
-      "change": "0.00",
-      "percent": "0.00%",
-      "status": "flat",
-      "delaySeconds": 220475,
+      "change": "+0.11",
+      "percent": "+2.58%",
+      "status": "up",
+      "delaySeconds": 220780,
       "points": [
         4.4830002784729,
         4.470999717712402,
@@ -285,10 +285,10 @@
       "name": "미국채 30년",
       "label": "Yield",
       "value": "4.98%",
-      "change": "0.00",
-      "percent": "0.00%",
-      "status": "flat",
-      "delaySeconds": 220475,
+      "change": "+0.12",
+      "percent": "+2.49%",
+      "status": "up",
+      "delaySeconds": 220780,
       "points": [
         4.990000247955322,
         4.980999946594238,
@@ -334,7 +334,7 @@
       "change": "+61.60",
       "percent": "+1.49%",
       "status": "up",
-      "delaySeconds": 141273,
+      "delaySeconds": 141578,
       "points": [
         4137,
         4135.89990234375,
@@ -380,7 +380,7 @@
       "change": "+0.09",
       "percent": "+0.13%",
       "status": "up",
-      "delaySeconds": 141272,
+      "delaySeconds": 141577,
       "points": [
         68.5,
         68.5,
@@ -428,7 +428,7 @@
       "change": "-207.36",
       "percent": "-0.80%",
       "status": "down",
-      "delaySeconds": 212312,
+      "delaySeconds": 212617,
       "points": [
         26060.0078125,
         25969.17578125,
@@ -474,7 +474,7 @@
       "change": "+0.01",
       "percent": "+0.00%",
       "status": "up",
-      "delaySeconds": 214336,
+      "delaySeconds": 214641,
       "points": [
         7507.5400390625,
         7495.35009765625,
@@ -520,7 +520,7 @@
       "change": "-727.06",
       "percent": "-5.44%",
       "status": "down",
-      "delaySeconds": 212312,
+      "delaySeconds": 212617,
       "points": [
         13091.23046875,
         12933.0927734375,
@@ -566,7 +566,7 @@
       "change": "-0.34",
       "percent": "-2.11%",
       "status": "down",
-      "delaySeconds": 146670,
+      "delaySeconds": 146975,
       "points": [
         15.960000038146973,
         15.9399995803833,

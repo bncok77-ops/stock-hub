@@ -49,6 +49,23 @@ function statusFromChange(change) {
     return "flat";
 }
 
+function getPreviousClose(meta, price) {
+    const previousClose = Number(meta.previousClose);
+    const chartPreviousClose = Number(meta.chartPreviousClose);
+
+    if (
+        Number.isFinite(chartPreviousClose) &&
+        Number.isFinite(previousClose) &&
+        Number.isFinite(price) &&
+        Math.abs(previousClose - price) < 0.000001 &&
+        Math.abs(chartPreviousClose - price) >= 0.000001
+    ) {
+        return chartPreviousClose;
+    }
+
+    return Number.isFinite(previousClose) ? previousClose : chartPreviousClose;
+}
+
 function formatMarketDate(timestampSeconds, timezone = "Asia/Seoul") {
     if (!Number.isFinite(timestampSeconds)) return null;
     const parts = new Intl.DateTimeFormat("en-CA", {
@@ -130,8 +147,8 @@ function chartToIndicator(config, chart) {
     const latestClose = closes.at(-1);
     const latestPointTime = closesWithTime.at(-1)?.timestamp;
     const regularMarketPrice = Number(meta.regularMarketPrice);
-    const previousClose = Number(meta.previousClose || meta.chartPreviousClose);
     const price = Number.isFinite(regularMarketPrice) ? regularMarketPrice : latestClose;
+    const previousClose = getPreviousClose(meta, price);
     const change = Number.isFinite(price) && Number.isFinite(previousClose) ? price - previousClose : NaN;
     const percent = Number.isFinite(change) && previousClose ? (change / previousClose) * 100 : NaN;
     const marketTime = Number(meta.regularMarketTime || latestPointTime);
