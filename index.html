@@ -31,35 +31,28 @@
 
     <main id="top">
         <section class="market-hero" id="dashboard">
-            <div class="section-heading">
-                <p class="eyebrow">국내 주식 중심</p>
-                <h1>주요 지표와 뉴스 흐름을 한 화면에서 확인</h1>
-                <p>코스피, 코스닥, 나스닥100 선물을 우선 배치하고 환율, 금리, 원자재, 디지털 자산, 미국 전일 지표를 함께 정리했습니다.</p>
-            </div>
-            <div class="data-status" id="data-status" aria-live="polite">시장 데이터를 불러오는 중입니다.</div>
-            <div class="hero-grid" id="priority-indices"></div>
-        </section>
-
-        <section class="indicator-section">
-            <div class="section-title-row">
+            <div class="dashboard-head">
                 <div>
-                    <p class="eyebrow">Macro</p>
-                    <h2>매크로 지표</h2>
+                    <p class="eyebrow">Market Dashboard</p>
+                    <h1>주요 지표</h1>
                 </div>
-                <span class="section-note">환율, 금리, 원자재, 디지털 자산</span>
+                <div class="data-status" id="data-status" aria-live="polite">시장 데이터를 불러오는 중입니다.</div>
             </div>
-            <div class="indicator-grid" id="macro-indicators"></div>
-        </section>
 
-        <section class="indicator-section">
-            <div class="section-title-row">
-                <div>
-                    <p class="eyebrow">Previous US Session</p>
-                    <h2>미국 전일 지표</h2>
-                </div>
-                <span class="section-note">국내 장 시작 전 참고 지표</span>
+            <div class="market-group">
+                <h2>주요</h2>
+                <div class="indicator-grid priority-grid" id="priority-indices"></div>
             </div>
-            <div class="indicator-grid compact" id="us-indicators"></div>
+
+            <div class="market-group">
+                <h2>매크로</h2>
+                <div class="indicator-grid" id="macro-indicators"></div>
+            </div>
+
+            <div class="market-group">
+                <h2>미국 전일</h2>
+                <div class="indicator-grid compact" id="us-indicators"></div>
+            </div>
         </section>
 
         <section class="workspace">

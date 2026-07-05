@@ -2,24 +2,25 @@ let priorityIndices = [];
 let macroIndicators = [];
 let usIndicators = [];
 
+const emptyPoints = [1, 1, 1, 1, 1];
 const fallbackIndicators = {
     priorityIndices: [
-        { name: "코스피", label: "대기 중", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] },
-        { name: "코스닥", label: "대기 중", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] },
-        { name: "나스닥100 선물", label: "대기 중", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] }
+        { name: "코스피", label: "KOSPI", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints },
+        { name: "코스닥", label: "KOSDAQ", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints },
+        { name: "나스닥100 선물", label: "NQ Futures", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints }
     ],
     macroIndicators: [
-        { name: "달러 환율", label: "USD/KRW", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] },
-        { name: "미국채 10년", label: "Yield", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] },
-        { name: "미국채 30년", label: "Yield", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] },
-        { name: "금", label: "Gold Futures", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] },
-        { name: "비트코인", label: "BTC/USD", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] },
-        { name: "국제 유가", label: "WTI", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] }
+        { name: "달러 환율", label: "USD/KRW", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints },
+        { name: "미국채 10년", label: "Yield", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints },
+        { name: "미국채 30년", label: "Yield", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints },
+        { name: "금", label: "Gold", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints },
+        { name: "비트코인", label: "BTC/USD", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints },
+        { name: "국제 유가", label: "WTI", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints }
     ],
     usIndicators: [
-        { name: "나스닥", label: "전일 종가", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] },
-        { name: "S&P 500", label: "전일 종가", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] },
-        { name: "필라델피아 반도체", label: "전일 종가", value: "-", change: "-", percent: "-", status: "flat", points: [1, 1, 1, 1, 1] }
+        { name: "나스닥", label: "NASDAQ", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints },
+        { name: "S&P 500", label: "S&P 500", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints },
+        { name: "필라델피아 반도체", label: "SOX", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints }
     ]
 };
 
@@ -36,7 +37,7 @@ const newsData = [
     },
     {
         title: "2차전지 소재주, 전기차 판매 회복 기대에 동반 상승",
-        summary: "업계 수주 전망과 정책 기대가 맞물리며 관련 종목에 단기 매수가 유입됐습니다.",
+        summary: "수주 전망과 정책 기대가 맞물리며 관련 종목에 단기 매수가 유입됐습니다.",
         source: "증시리포트",
         publishedAt: "2026-06-11T13:10:00+09:00",
         category: "theme",
@@ -63,36 +64,6 @@ const newsData = [
         categoryName: "해외",
         stock: "HD현대일렉트릭",
         theme: "AI 전력"
-    },
-    {
-        title: "방산주, 해외 수주 모멘텀 재평가",
-        summary: "중동과 유럽 프로젝트 기대감이 이어지며 주요 방산주의 거래대금이 늘었습니다.",
-        source: "섹터리포트",
-        publishedAt: "2026-06-10T15:40:00+09:00",
-        category: "theme",
-        categoryName: "테마",
-        stock: "한화에어로스페이스",
-        theme: "방산"
-    },
-    {
-        title: "바이오주, 임상 일정 앞두고 선별적 강세",
-        summary: "개별 파이프라인 이벤트가 가까운 종목 위주로 변동성이 확대됐습니다.",
-        source: "바이오워치",
-        publishedAt: "2026-06-10T10:15:00+09:00",
-        category: "stock",
-        categoryName: "종목",
-        stock: "셀트리온",
-        theme: "바이오"
-    },
-    {
-        title: "국제 유가 상승, 정유와 조선 업종에 엇갈린 영향",
-        summary: "에너지 가격 반등은 업종별 마진과 발주 전망을 동시에 흔들고 있습니다.",
-        source: "에너지데일리",
-        publishedAt: "2026-06-09T16:05:00+09:00",
-        category: "global",
-        categoryName: "해외",
-        stock: "S-Oil",
-        theme: "에너지"
     }
 ];
 
@@ -119,20 +90,39 @@ const state = {
 
 const formatters = {
     time: new Intl.DateTimeFormat("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false }),
-    date: new Intl.DateTimeFormat("ko-KR", { month: "long", day: "numeric", weekday: "short" })
+    date: new Intl.DateTimeFormat("ko-KR", { month: "long", day: "numeric", weekday: "short" }),
+    compactDate: new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" })
 };
 
+function formatMarketDate(item) {
+    if (item.marketDate) return item.marketDate;
+    if (!item.marketTime) return "-";
+    return formatters.compactDate.format(new Date(item.marketTime)).replace(/\s/g, "");
+}
+
+function formatDelay(seconds) {
+    if (!Number.isFinite(seconds)) return "지연 확인 중";
+    if (seconds < 60) return `지연 ${seconds}초`;
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `지연 ${minutes}분`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `지연 ${hours}시간`;
+    const days = Math.floor(hours / 24);
+    const remainHours = hours % 24;
+    return remainHours ? `지연 ${days}일 ${remainHours}시간` : `지연 ${days}일`;
+}
+
 function createSparkline(points, status) {
-    const width = 240;
-    const height = 82;
-    const safePoints = points.length > 1 ? points : [1, 1];
+    const width = 180;
+    const height = 44;
+    const safePoints = points && points.length > 1 ? points : [1, 1];
     const min = Math.min(...safePoints);
     const max = Math.max(...safePoints);
     const range = max - min || 1;
     const step = width / (safePoints.length - 1);
     const path = safePoints.map((point, index) => {
         const x = index * step;
-        const y = height - ((point - min) / range) * (height - 12) - 6;
+        const y = height - ((point - min) / range) * (height - 8) - 4;
         return `${index === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`;
     }).join(" ");
 
@@ -144,7 +134,6 @@ function createSparkline(points, status) {
 }
 
 function renderIndicatorCard(item, priority = false) {
-    const delay = Number.isFinite(item.delaySeconds) ? `지연 ${item.delaySeconds.toLocaleString("ko-KR")}초` : "지연 확인 중";
     return `
         <article class="indicator-card${priority ? " priority" : ""}">
             <div class="indicator-top">
@@ -157,8 +146,11 @@ function renderIndicatorCard(item, priority = false) {
                     ${item.change}<br>${item.percent}
                 </div>
             </div>
-            <div class="delay-badge">${delay}</div>
             ${createSparkline(item.points, item.status)}
+            <div class="indicator-meta">
+                <span>기준일 ${formatMarketDate(item)}</span>
+                <span>${formatDelay(item.delaySeconds)}</span>
+            </div>
         </article>
     `;
 }
@@ -170,13 +162,14 @@ function renderIndicators() {
 }
 
 function renderTicker() {
-    const tickerItems = [...priorityIndices, ...macroIndicators, ...usIndicators].map(item => `
+    const items = [...priorityIndices, ...macroIndicators, ...usIndicators].map(item => `
         <span class="ticker-item">
             ${item.name}
             <span class="${item.status}">${item.value} ${item.percent}</span>
+            <span>${formatMarketDate(item)}</span>
         </span>
     `).join("");
-    document.getElementById("ticker-track").innerHTML = tickerItems + tickerItems;
+    document.getElementById("ticker-track").innerHTML = items + items;
 }
 
 function setIndicators(data) {
@@ -203,10 +196,10 @@ async function fetchMarketData() {
         const data = await response.json();
         setIndicators(data);
         const updated = new Date(data.generatedAt);
-        updateDataStatus(`시장 데이터 갱신: ${formatters.date.format(updated)} ${formatters.time.format(updated)} · 카드별 기준 시각 대비 지연 초 표시`);
+        updateDataStatus(`갱신 ${formatters.compactDate.format(updated).replace(/\s/g, "")} ${formatters.time.format(updated)} · 기준일은 각 지표 원천 데이터 기준`);
     } catch (error) {
         console.error(error);
-        updateDataStatus("시장 데이터를 불러오지 못했습니다. 잠시 후 다시 시도합니다.", true);
+        updateDataStatus("시장 데이터를 불러오지 못했습니다. 카드의 기준일을 확인해 주세요.", true);
     }
 }
 
