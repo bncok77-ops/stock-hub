@@ -66,6 +66,17 @@ function getPreviousClose(meta, price) {
     return Number.isFinite(previousClose) ? previousClose : chartPreviousClose;
 }
 
+function getPreviousSessionClose(closesWithTime, timezone) {
+    const latest = closesWithTime.at(-1);
+    if (!latest) return NaN;
+
+    const previousSession = closesWithTime
+        .filter(item => formatMarketDate(item.timestamp, timezone) !== formatMarketDate(latest.timestamp, timezone))
+        .at(-1);
+
+    return previousSession?.close;
+}
+
 function formatMarketDate(timestampSeconds, timezone = "Asia/Seoul") {
     if (!Number.isFinite(timestampSeconds)) return null;
     const parts = new Intl.DateTimeFormat("en-CA", {
@@ -148,13 +159,14 @@ function chartToIndicator(config, chart) {
     const latestPointTime = closesWithTime.at(-1)?.timestamp;
     const regularMarketPrice = Number(meta.regularMarketPrice);
     const price = Number.isFinite(regularMarketPrice) ? regularMarketPrice : latestClose;
-    const previousClose = getPreviousClose(meta, price);
+    const displayTimezone = config.displayTimezone || meta.exchangeTimezoneName || "Asia/Seoul";
+    const previousSessionClose = getPreviousSessionClose(closesWithTime, displayTimezone);
+    const previousClose = Number.isFinite(previousSessionClose) ? previousSessionClose : getPreviousClose(meta, price);
     const change = Number.isFinite(price) && Number.isFinite(previousClose) ? price - previousClose : NaN;
     const percent = Number.isFinite(change) && previousClose ? (change / previousClose) * 100 : NaN;
     const marketTime = Number(meta.regularMarketTime || latestPointTime);
     const delaySeconds = Number.isFinite(marketTime) ? Math.max(0, Math.floor(Date.now() / 1000 - marketTime)) : null;
     const marketSession = getMarketSession(config, meta, delaySeconds);
-    const displayTimezone = config.displayTimezone || meta.exchangeTimezoneName || "Asia/Seoul";
 
     return {
         name: config.name,
