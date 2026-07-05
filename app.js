@@ -94,10 +94,14 @@ const formatters = {
     compactDate: new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" })
 };
 
+function formatCompactDate(date) {
+    return formatters.compactDate.format(date).replace(/\s/g, "");
+}
+
 function formatMarketDate(item) {
     if (item.marketDate) return item.marketDate;
     if (!item.marketTime) return "-";
-    return formatters.compactDate.format(new Date(item.marketTime)).replace(/\s/g, "");
+    return formatCompactDate(new Date(item.marketTime));
 }
 
 function formatDelay(seconds) {
@@ -186,20 +190,29 @@ function updateDataStatus(message, isError = false) {
     status.classList.toggle("error", isError);
 }
 
+async function fetchJson(url) {
+    const response = await fetch(url, { cache: "no-store" });
+    if (!response.ok) {
+        throw new Error(`${url} 요청 실패: ${response.status}`);
+    }
+    return response.json();
+}
+
 async function fetchMarketData() {
     try {
-        const response = await fetch("/api/market-summary", { cache: "no-store" });
-        if (!response.ok) {
-            throw new Error(`시장 데이터 요청 실패: ${response.status}`);
+        let data;
+        try {
+            data = await fetchJson("api/market-summary");
+        } catch {
+            data = await fetchJson("api/market-summary.json");
         }
 
-        const data = await response.json();
         setIndicators(data);
         const updated = new Date(data.generatedAt);
-        updateDataStatus(`갱신 ${formatters.compactDate.format(updated).replace(/\s/g, "")} ${formatters.time.format(updated)} · 기준일은 각 지표 원천 데이터 기준`);
+        updateDataStatus(`갱신 ${formatCompactDate(updated)} ${formatters.time.format(updated)} · 무료 GitHub Pages는 약 5분 주기로 갱신`);
     } catch (error) {
         console.error(error);
-        updateDataStatus("시장 데이터를 불러오지 못했습니다. 카드의 기준일을 확인해 주세요.", true);
+        updateDataStatus("시장 데이터를 불러오지 못했습니다. 잠시 후 다시 확인해 주세요.", true);
     }
 }
 
@@ -377,7 +390,7 @@ function init() {
     renderNews();
     setupInteractions();
     fetchMarketData();
-    setInterval(fetchMarketData, 15000);
+    setInterval(fetchMarketData, 300_000);
 }
 
 document.addEventListener("DOMContentLoaded", init);
