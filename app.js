@@ -196,6 +196,42 @@ function updateDataStatus(message, isError = false) {
     status.classList.toggle("error", isError);
 }
 
+function formatRefreshInterval(seconds) {
+    const minutes = Math.max(1, Math.round(Number(seconds || 60) / 60));
+    return `${minutes}분 주기 갱신`;
+}
+
+function getGeneratedAgeSeconds(generatedAt) {
+    const timestamp = new Date(generatedAt).getTime();
+    if (!Number.isFinite(timestamp)) return Infinity;
+    return Math.max(0, Math.floor((Date.now() - timestamp) / 1000));
+}
+
+function formatDataStatus(data) {
+    const updated = new Date(data.generatedAt);
+    const ageSeconds = getGeneratedAgeSeconds(data.generatedAt);
+    const base = `갱신 ${formatCompactDate(updated)} ${formatters.time.format(updated)} · ${formatRefreshInterval(data.refreshIntervalSeconds)}`;
+
+    if (ageSeconds >= 600) {
+        return {
+            message: `${base} · 데이터 갱신 중단 가능성`,
+            isError: true
+        };
+    }
+
+    if (ageSeconds >= 180) {
+        return {
+            message: `${base} · 업데이트 지연`,
+            isError: true
+        };
+    }
+
+    return {
+        message: base,
+        isError: false
+    };
+}
+
 async function fetchJson(url) {
     const response = await fetch(url, { cache: "no-store" });
     if (!response.ok) {
@@ -206,23 +242,12 @@ async function fetchJson(url) {
 
 async function fetchMarketData() {
     try {
-        let data;
         const cacheBust = `v=${Date.now()}`;
-        const isLocalServer = ["localhost", "127.0.0.1"].includes(window.location.hostname);
-
-        if (isLocalServer) {
-            try {
-                data = await fetchJson(`api/market-summary?${cacheBust}`);
-            } catch {
-                data = await fetchJson(`api/market-summary.json?${cacheBust}`);
-            }
-        } else {
-            data = await fetchJson(`api/market-summary.json?${cacheBust}`);
-        }
+        const data = await fetchJson(`/api/market-summary?${cacheBust}`);
 
         setIndicators(data);
-        const updated = new Date(data.generatedAt);
-        updateDataStatus(`갱신 ${formatCompactDate(updated)} ${formatters.time.format(updated)} · 약 5분 주기 갱신`);
+        const status = formatDataStatus(data);
+        updateDataStatus(status.message, status.isError);
     } catch (error) {
         console.error(error);
         updateDataStatus("시장 데이터를 불러오지 못했습니다. 잠시 후 다시 확인해 주세요.", true);

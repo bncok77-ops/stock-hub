@@ -1,0 +1,11 @@
+name = "stock-hub-market-cron"
+main = "worker/index.js"
+compatibility_date = "2026-07-08"
+
+[triggers]
+crons = ["* * * * *"]
+
+[[kv_namespaces]]
+binding = "MARKET_DATA_KV"
+id = "ab2b7c9704a544f49324013a6eb15b60"
+preview_id = "b842a0a69b884922ba7175e9a274e80f"

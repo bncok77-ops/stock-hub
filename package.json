@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "description": "StockHub market dashboard",
-  "main": "server.js",
+  "type": "module",
   "scripts": {
-    "start": "node server.js",
-    "check": "node --check server.js && node --check app.js && node --check market-data.js && node --check scripts/generate-market-data.js",
-    "generate:data": "node scripts/generate-market-data.js"
+    "dev": "npx wrangler pages dev .",
+    "dev:worker": "npx wrangler dev --config wrangler.worker.toml",
+    "deploy:pages": "npx wrangler pages deploy . --project-name stock-hub",
+    "deploy:worker": "npx wrangler deploy --config wrangler.worker.toml",
+    "check": "node --check app.js && node --check market-data.js && node --check worker/index.js && node --check functions/api/market-summary.js"
   },
   "engines": {
     "node": ">=18"

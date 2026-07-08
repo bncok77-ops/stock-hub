@@ -125,7 +125,15 @@ function getMarketSession(config, meta, delaySeconds) {
     return { status: "closed", label: "장마감" };
 }
 
-async function fetchYahooChart(symbol) {
+const MAX_EXTERNAL_FETCHES_PER_RUN = 50;
+const MAX_CONCURRENT_YAHOO_REQUESTS = 5;
+
+async function fetchYahooChart(symbol, fetchBudget) {
+    fetchBudget.count += 1;
+    if (fetchBudget.count > MAX_EXTERNAL_FETCHES_PER_RUN) {
+        throw new Error(`External fetch limit exceeded: ${MAX_EXTERNAL_FETCHES_PER_RUN}`);
+    }
+
     const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=5d&interval=15m`;
     const response = await fetch(url, {
         headers: {
@@ -210,34 +218,125 @@ function failedIndicator(config, error) {
     };
 }
 
-async function buildGroup(group) {
-    return Promise.all(group.map(async config => {
-        try {
-            const chart = await fetchYahooChart(config.symbol);
-            return chartToIndicator(config, chart);
-        } catch (error) {
-            return failedIndicator(config, error);
-        }
-    }));
+function getPreviousIndicator(previousSummary, symbol) {
+    if (!previousSummary) return null;
+
+    return [
+        ...(previousSummary.priorityIndices || []),
+        ...(previousSummary.macroIndicators || []),
+        ...(previousSummary.usIndicators || [])
+    ].find(item => item.symbol === symbol) || null;
 }
 
-async function getMarketSummary() {
-    const [priorityIndices, macroIndicators, usIndicators] = await Promise.all([
-        buildGroup(symbols.priorityIndices),
-        buildGroup(symbols.macroIndicators),
-        buildGroup(symbols.usIndicators)
-    ]);
+function indicatorFromFailure(config, error, previousSummary) {
+    const previousIndicator = getPreviousIndicator(previousSummary, config.symbol);
+    if (previousIndicator) {
+        return {
+            ...previousIndicator,
+            error: error.message,
+            recoveredFromPrevious: true
+        };
+    }
+
+    return failedIndicator(config, error);
+}
+
+async function mapWithConcurrency(items, limit, mapper) {
+    const results = new Array(items.length);
+    let nextIndex = 0;
+
+    async function worker() {
+        while (nextIndex < items.length) {
+            const currentIndex = nextIndex;
+            nextIndex += 1;
+            results[currentIndex] = await mapper(items[currentIndex], currentIndex);
+        }
+    }
+
+    const workers = Array.from(
+        { length: Math.min(limit, items.length) },
+        () => worker()
+    );
+    await Promise.all(workers);
+
+    return results;
+}
+
+async function buildIndicators(previousSummary) {
+    const fetchBudget = { count: 0 };
+    const failures = [];
+    const tasks = [
+        ...symbols.priorityIndices.map((config, index) => ({ group: "priorityIndices", index, config })),
+        ...symbols.macroIndicators.map((config, index) => ({ group: "macroIndicators", index, config })),
+        ...symbols.usIndicators.map((config, index) => ({ group: "usIndicators", index, config }))
+    ];
+    const groups = {
+        priorityIndices: new Array(symbols.priorityIndices.length),
+        macroIndicators: new Array(symbols.macroIndicators.length),
+        usIndicators: new Array(symbols.usIndicators.length)
+    };
+
+    await mapWithConcurrency(tasks, MAX_CONCURRENT_YAHOO_REQUESTS, async task => {
+        try {
+            const chart = await fetchYahooChart(task.config.symbol, fetchBudget);
+            groups[task.group][task.index] = chartToIndicator(task.config, chart);
+        } catch (error) {
+            failures.push({
+                symbol: task.config.symbol,
+                message: error.message
+            });
+            groups[task.group][task.index] = indicatorFromFailure(task.config, error, previousSummary);
+        }
+    });
+
+    return {
+        ...groups,
+        failures,
+        fetchCount: fetchBudget.count
+    };
+}
+
+export const UPDATE_INTERVAL_MINUTES = 1;
+export const MARKET_SUMMARY_KEY = "market-summary";
+export const MARKET_SUMMARY_LAST_ERROR_KEY = "market-summary:last-error";
+
+export function isKoreanMarketUpdateTime(date = new Date()) {
+    const parts = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Asia/Seoul",
+        weekday: "short",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+    }).formatToParts(date);
+    const get = type => parts.find(part => part.type === type)?.value;
+    const weekday = get("weekday");
+    const hour = Number(get("hour"));
+    const minute = Number(get("minute"));
+
+    if (["Sat", "Sun"].includes(weekday)) return false;
+    if (!Number.isFinite(hour) || !Number.isFinite(minute)) return false;
+
+    const currentMinutes = hour * 60 + minute;
+    return currentMinutes >= 9 * 60 && currentMinutes <= 15 * 60 + 30;
+}
+
+export async function getMarketSummary({ previousSummary = null } = {}) {
+    const {
+        priorityIndices,
+        macroIndicators,
+        usIndicators,
+        failures,
+        fetchCount
+    } = await buildIndicators(previousSummary);
 
     return {
         generatedAt: new Date().toISOString(),
         source: "Yahoo Finance chart endpoint",
-        refreshIntervalSeconds: 300,
+        refreshIntervalSeconds: UPDATE_INTERVAL_MINUTES * 60,
+        fetchCount,
+        failures,
         priorityIndices,
         macroIndicators,
         usIndicators
     };
 }
-
-module.exports = {
-    getMarketSummary
-};
