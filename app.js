@@ -122,22 +122,28 @@ function formatDelay(item) {
     return session?.label || "거래중";
 }
 
-function createSparkline(points, status) {
+function createSparkline(points, status, previousClose) {
     const width = 180;
     const height = 44;
     const safePoints = points && points.length > 1 ? points : [1, 1];
-    const min = Math.min(...safePoints);
-    const max = Math.max(...safePoints);
+    const baseline = Number(previousClose);
+    const hasBaseline = Number.isFinite(baseline);
+    const scalePoints = hasBaseline ? [...safePoints, baseline] : safePoints;
+    const min = Math.min(...scalePoints);
+    const max = Math.max(...scalePoints);
     const range = max - min || 1;
     const step = width / (safePoints.length - 1);
+    const pointToY = point => height - ((point - min) / range) * (height - 8) - 4;
     const path = safePoints.map((point, index) => {
         const x = index * step;
-        const y = height - ((point - min) / range) * (height - 8) - 4;
+        const y = pointToY(point);
         return `${index === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`;
     }).join(" ");
+    const baselineY = hasBaseline ? pointToY(baseline).toFixed(1) : null;
 
     return `
         <svg class="sparkline" viewBox="0 0 ${width} ${height}" role="img" aria-label="최근 흐름 차트">
+            ${hasBaseline ? `<line class="sparkline-baseline" x1="0" y1="${baselineY}" x2="${width}" y2="${baselineY}"></line>` : ""}
             <path d="${path}" class="${status}"></path>
         </svg>
     `;
@@ -156,7 +162,7 @@ function renderIndicatorCard(item, priority = false) {
                     ${item.change}<br>${item.percent}
                 </div>
             </div>
-            ${createSparkline(item.points, item.status)}
+            ${createSparkline(item.points, item.status, item.previousClose)}
             <div class="indicator-meta">
                 <span>기준일 ${formatMarketDate(item)}</span>
                 <span>${formatDelay(item)}</span>
@@ -428,7 +434,7 @@ function init() {
     renderNews();
     setupInteractions();
     fetchMarketData();
-    setInterval(fetchMarketData, 300_000);
+    setInterval(fetchMarketData, 60_000);
 }
 
 document.addEventListener("DOMContentLoaded", init);

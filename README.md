@@ -90,5 +90,17 @@ After the first successful Worker run, verify:
 To inspect the latest recorded failure, read the KV key:
 
 ```powershell
-npx wrangler kv key get market-summary:last-error --binding MARKET_DATA_KV --config wrangler.worker.toml
+npx wrangler kv key get market-summary:last-error --binding MARKET_DATA_KV --remote --config wrangler.worker.toml
+```
+
+To verify that Cron is actually firing, inspect the heartbeat key:
+
+```powershell
+npx wrangler kv key get market-summary:cron-heartbeat --binding MARKET_DATA_KV --remote --config wrangler.worker.toml
+```
+
+If the Worker is deployed but the heartbeat does not update, re-apply triggers:
+
+```powershell
+npx wrangler triggers deploy --config wrangler.worker.toml
 ```

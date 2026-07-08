@@ -366,6 +366,13 @@ h3 {
     stroke-linejoin: round;
 }
 
+.sparkline-baseline {
+    stroke: var(--muted);
+    stroke-width: 1.5;
+    stroke-dasharray: 5 5;
+    opacity: 0.72;
+}
+
 .indicator-section,
 .calendar-section {
     margin-top: 18px;

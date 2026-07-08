@@ -7,6 +7,7 @@ import {
 } from "../market-data.js";
 
 const MIN_STORE_INTERVAL_MS = 45_000;
+const CRON_HEARTBEAT_KEY = "market-summary:cron-heartbeat";
 
 function getSummaryAgeMs(summary, now) {
     if (!summary?.generatedAt) return Infinity;
@@ -80,7 +81,24 @@ async function updateMarketSummary(env, now = new Date()) {
 
 export default {
     async scheduled(event, env, ctx) {
-        ctx.waitUntil(updateMarketSummary(env));
+        ctx.waitUntil((async () => {
+            await env.MARKET_DATA_KV.put(CRON_HEARTBEAT_KEY, JSON.stringify({
+                checkedAt: new Date().toISOString(),
+                cron: event.cron || null,
+                scheduledTime: event.scheduledTime || null
+            }));
+
+            try {
+                await updateMarketSummary(env);
+            } catch (error) {
+                await storeLastError(env, {
+                    type: "scheduled-handler-failed",
+                    message: error.message,
+                    stack: error.stack
+                });
+                throw error;
+            }
+        })());
     },
 
     async fetch(request, env) {

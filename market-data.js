@@ -185,6 +185,8 @@ function chartToIndicator(config, chart) {
         status: statusFromChange(change),
         delaySeconds,
         points: closes.slice(-24),
+        previousClose: Number.isFinite(previousClose) ? previousClose : null,
+        previousCloseText: Number.isFinite(previousClose) ? formatNumber(previousClose, config.decimals, config.prefix, config.suffix) : "-",
         source: "Yahoo Finance",
         symbol: config.symbol,
         exchangeName: meta.exchangeName || null,
