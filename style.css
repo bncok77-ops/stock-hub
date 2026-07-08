@@ -397,6 +397,11 @@ h3 {
     padding: 20px;
 }
 
+.standalone-news {
+    max-width: 980px;
+    margin: 0 auto;
+}
+
 .segmented-control,
 .filter-row {
     display: flex;

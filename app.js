@@ -7,7 +7,7 @@ const fallbackIndicators = {
     priorityIndices: [
         { name: "코스피", label: "KOSPI", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints },
         { name: "코스닥", label: "KOSDAQ", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints },
-        { name: "나스닥100 선물", label: "NQ Futures", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints }
+        { name: "나스닥 100 선물", label: "NQ Futures", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints }
     ],
     macroIndicators: [
         { name: "달러 환율", label: "USD/KRW", value: "-", change: "-", percent: "-", status: "flat", points: emptyPoints },
@@ -25,73 +25,8 @@ const fallbackIndicators = {
     ]
 };
 
-const newsData = [
-    {
-        title: "삼성전자, HBM 공급 기대감에 장중 강세",
-        summary: "반도체 대형주의 수급이 개선되며 코스피 방향성에 영향을 주고 있습니다.",
-        source: "마켓브리프",
-        publishedAt: "2026-06-11T14:35:00+09:00",
-        category: "stock",
-        categoryName: "종목",
-        stock: "삼성전자",
-        theme: "반도체"
-    },
-    {
-        title: "2차전지 소재주, 전기차 판매 회복 기대에 동반 상승",
-        summary: "수주 전망과 정책 기대가 맞물리며 관련 종목에 단기 매수가 유입됐습니다.",
-        source: "증시리포트",
-        publishedAt: "2026-06-11T13:10:00+09:00",
-        category: "theme",
-        categoryName: "테마",
-        stock: "에코프로비엠",
-        theme: "2차전지"
-    },
-    {
-        title: "원달러 환율 상승, 수출주와 외국인 수급 변수로 부각",
-        summary: "환율 변동성이 커지며 자동차, 반도체, 화학 업종의 민감도가 높아졌습니다.",
-        source: "한국경제데스크",
-        publishedAt: "2026-06-11T11:20:00+09:00",
-        category: "market",
-        categoryName: "시장",
-        stock: "현대차",
-        theme: "수출주"
-    },
-    {
-        title: "미국 기술주 반등, 국내 AI 인프라주 관심 확대",
-        summary: "나스닥과 S&P 500 상승 마감 이후 국내 AI 서버, 전력설비 관련주가 주목받고 있습니다.",
-        source: "글로벌마켓",
-        publishedAt: "2026-06-11T09:05:00+09:00",
-        category: "global",
-        categoryName: "해외",
-        stock: "HD현대일렉트릭",
-        theme: "AI 전력"
-    }
-];
-
-const themeData = [
-    { name: "반도체", count: 18, leaders: "삼성전자, SK하이닉스" },
-    { name: "2차전지", count: 12, leaders: "LG에너지솔루션, 에코프로비엠" },
-    { name: "AI 전력", count: 9, leaders: "HD현대일렉트릭, LS ELECTRIC" },
-    { name: "방산", count: 7, leaders: "한화에어로스페이스, LIG넥스원" },
-    { name: "바이오", count: 6, leaders: "셀트리온, 삼성바이오로직스" }
-];
-
-const stockData = [
-    { name: "삼성전자", sector: "반도체", news: 8 },
-    { name: "SK하이닉스", sector: "반도체", news: 6 },
-    { name: "현대차", sector: "수출주", news: 4 },
-    { name: "셀트리온", sector: "바이오", news: 3 }
-];
-
-const state = {
-    filter: "all",
-    view: "timeline",
-    query: ""
-};
-
 const formatters = {
     time: new Intl.DateTimeFormat("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false }),
-    date: new Intl.DateTimeFormat("ko-KR", { month: "long", day: "numeric", weekday: "short" }),
     compactDate: new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" })
 };
 
@@ -107,9 +42,9 @@ function formatMarketDate(item) {
 
 function formatDelay(item) {
     const session = item.marketSession;
-    if (session?.status === "always-open") return "5분 주기 갱신";
+    if (session?.status === "always-open") return "실시간";
     if (session?.status === "fx-stale") return "최근 고시";
-    if (session?.status === "closed") return "장마감";
+    if (session?.status === "closed") return "마감";
     if (session?.status === "pre") return "장전";
     if (session?.status === "post") return "시간외";
     if (session?.status === "unknown") return "확인 필요";
@@ -219,23 +154,14 @@ function formatDataStatus(data) {
     const base = `갱신 ${formatCompactDate(updated)} ${formatters.time.format(updated)} · ${formatRefreshInterval(data.refreshIntervalSeconds)}`;
 
     if (ageSeconds >= 600) {
-        return {
-            message: `${base} · 데이터 갱신 중단 가능성`,
-            isError: true
-        };
+        return { message: `${base} · 데이터 갱신 중단 가능성`, isError: true };
     }
 
     if (ageSeconds >= 180) {
-        return {
-            message: `${base} · 업데이트 지연`,
-            isError: true
-        };
+        return { message: `${base} · 업데이트 지연`, isError: true };
     }
 
-    return {
-        message: base,
-        isError: false
-    };
+    return { message: base, isError: false };
 }
 
 async function fetchJson(url) {
@@ -260,179 +186,24 @@ async function fetchMarketData() {
     }
 }
 
-function getFilteredNews() {
-    const query = state.query.trim().toLowerCase();
-    return newsData
-        .filter(item => state.filter === "all" || item.category === state.filter)
-        .filter(item => {
-            if (!query) return true;
-            return [item.title, item.summary, item.stock, item.theme, item.categoryName]
-                .join(" ")
-                .toLowerCase()
-                .includes(query);
-        })
-        .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
-}
+function setupTheme() {
+    const button = document.getElementById("theme-toggle");
+    const saved = localStorage.getItem("stockhub-theme") || "dark";
+    document.documentElement.dataset.theme = saved;
+    button.textContent = saved === "dark" ? "다크" : "라이트";
 
-function renderTimeline(news) {
-    return news.map(item => {
-        const date = new Date(item.publishedAt);
-        return `
-            <article class="news-card">
-                <div class="news-time">
-                    <span>${formatters.date.format(date)}</span>
-                    <strong>${formatters.time.format(date)}</strong>
-                </div>
-                <div>
-                    <div class="news-tags">
-                        <span class="pill">${item.categoryName}</span>
-                        <span class="pill">${item.theme}</span>
-                    </div>
-                    <h3 class="news-title">${item.title}</h3>
-                    <p class="news-summary">${item.summary}</p>
-                    <div class="news-meta">
-                        <span>${item.source}</span>
-                        <span>${item.stock}</span>
-                    </div>
-                </div>
-            </article>
-        `;
-    }).join("");
-}
-
-function groupNewsByDate(news) {
-    return news.reduce((groups, item) => {
-        const dateKey = item.publishedAt.slice(0, 10);
-        groups[dateKey] = groups[dateKey] || [];
-        groups[dateKey].push(item);
-        return groups;
-    }, {});
-}
-
-function renderDateView(news) {
-    const groups = groupNewsByDate(news);
-    return Object.entries(groups).map(([dateKey, items]) => {
-        const date = new Date(`${dateKey}T00:00:00+09:00`);
-        return `
-            <section class="date-group">
-                <h3>${formatters.date.format(date)}</h3>
-                <div class="daily-list">
-                    ${items.map(item => `
-                        <div class="daily-item">
-                            <span><strong>${formatters.time.format(new Date(item.publishedAt))}</strong> ${item.title}</span>
-                            <span class="pill">${item.theme}</span>
-                        </div>
-                    `).join("")}
-                </div>
-            </section>
-        `;
-    }).join("");
-}
-
-function renderNews() {
-    const news = getFilteredNews();
-    const target = document.getElementById("news-list");
-
-    if (!news.length) {
-        target.innerHTML = `<div class="empty-state">검색 조건에 맞는 뉴스가 없습니다.</div>`;
-        return;
-    }
-
-    target.innerHTML = state.view === "timeline" ? renderTimeline(news) : renderDateView(news);
-    renderDateGroups();
-}
-
-function renderDateGroups() {
-    const sortedNews = [...newsData].sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
-    const groups = groupNewsByDate(sortedNews);
-    document.getElementById("date-groups").innerHTML = Object.entries(groups).map(([dateKey, items]) => {
-        const date = new Date(`${dateKey}T00:00:00+09:00`);
-        return `
-            <section class="date-group">
-                <h3>${formatters.date.format(date)}</h3>
-                <div class="daily-list">
-                    ${items.slice(0, 4).map(item => `
-                        <div class="daily-item">
-                            <span><strong>${formatters.time.format(new Date(item.publishedAt))}</strong> ${item.title}</span>
-                        </div>
-                    `).join("")}
-                </div>
-            </section>
-        `;
-    }).join("");
-}
-
-function renderSideRail() {
-    document.getElementById("theme-list").innerHTML = themeData.map(item => `
-        <button type="button" class="theme-item" data-query="${item.name}">
-            <strong>${item.name}</strong>
-            <span>${item.count}건 · ${item.leaders}</span>
-        </button>
-    `).join("");
-
-    document.getElementById("stock-list").innerHTML = stockData.map(item => `
-        <button type="button" class="stock-chip" data-query="${item.name}">
-            <strong>${item.name}</strong>
-            <span>${item.sector} · 뉴스 ${item.news}</span>
-        </button>
-    `).join("");
-}
-
-function setupInteractions() {
-    document.querySelectorAll("[data-filter]").forEach(button => {
-        button.addEventListener("click", () => {
-            state.filter = button.dataset.filter;
-            document.querySelectorAll("[data-filter]").forEach(item => item.classList.remove("active"));
-            button.classList.add("active");
-            renderNews();
-        });
-    });
-
-    document.querySelectorAll("[data-view]").forEach(button => {
-        button.addEventListener("click", () => {
-            state.view = button.dataset.view;
-            document.querySelectorAll("[data-view]").forEach(item => item.classList.remove("active"));
-            button.classList.add("active");
-            renderNews();
-        });
-    });
-
-    document.getElementById("search-input").addEventListener("input", event => {
-        state.query = event.target.value;
-        renderNews();
-    });
-
-    document.querySelectorAll("[data-query]").forEach(button => {
-        button.addEventListener("click", () => {
-            const searchInput = document.getElementById("search-input");
-            state.query = button.dataset.query;
-            searchInput.value = state.query;
-            document.getElementById("news").scrollIntoView({ behavior: "smooth", block: "start" });
-            renderNews();
-        });
-    });
-
-    document.getElementById("theme-toggle").addEventListener("click", () => {
+    button.addEventListener("click", () => {
         const current = document.documentElement.dataset.theme || "dark";
         const next = current === "dark" ? "light" : "dark";
         document.documentElement.dataset.theme = next;
         localStorage.setItem("stockhub-theme", next);
-        document.getElementById("theme-toggle").textContent = next === "dark" ? "다크" : "라이트";
+        button.textContent = next === "dark" ? "다크" : "라이트";
     });
 }
 
-function loadTheme() {
-    const saved = localStorage.getItem("stockhub-theme") || "dark";
-    document.documentElement.dataset.theme = saved;
-    document.getElementById("theme-toggle").textContent = saved === "dark" ? "다크" : "라이트";
-}
-
 function init() {
-    loadTheme();
+    setupTheme();
     setIndicators(fallbackIndicators);
-    renderSideRail();
-    renderNews();
-    setupInteractions();
     fetchMarketData();
     setInterval(fetchMarketData, 60_000);
 }

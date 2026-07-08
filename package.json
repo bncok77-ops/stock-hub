@@ -9,7 +9,7 @@
     "dev:worker": "npx wrangler dev --config wrangler.worker.toml",
     "deploy:pages": "npx wrangler pages deploy . --project-name stock-hub",
     "deploy:worker": "npx wrangler deploy --config wrangler.worker.toml",
-    "check": "node --check app.js && node --check market-data.js && node --check worker/index.js && node --check functions/api/market-summary.js"
+    "check": "node --check app.js && node --check news.js && node --check market-data.js && node --check worker/index.js && node --check functions/api/market-summary.js"
   },
   "engines": {
     "node": ">=18"
